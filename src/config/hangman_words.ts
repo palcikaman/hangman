@@ -1,4 +1,4 @@
-[
+export const WORDS = [
   "activity",
   "actually",
   "although",
@@ -159,5 +159,5 @@
   "environmental",
   "international",
   "administration",
-  "responsibility"
-]
+  "responsibility",
+];
