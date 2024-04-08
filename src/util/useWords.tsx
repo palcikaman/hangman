@@ -1,21 +1,29 @@
 import { useMemo } from "react";
 import { WORDS } from "../config/hangman_words";
+import { getRandomArrayElement } from "./functions";
 
 export const useWords = () => {
-  const wordLimit = useMemo(
+  const wordOptions = useMemo(
     () =>
       WORDS.reduce(
-        (res, word) => ({
-          min: res.min < word.length ? res.min : word.length,
-          max: res.max > word.length ? res.max : word.length,
-        }),
-        { min: Infinity, max: 0 }
+        (res: number[], word) =>
+          res.includes(word.length) ? res : [...res, word.length],
+        []
       ),
     [WORDS]
   );
 
+  const getRandomWord = (length: number | "random") => {
+    const wordLength =
+      length === "random" ? getRandomArrayElement(wordOptions) : length;
+    return getRandomArrayElement(
+      WORDS.filter((word) => word.length === wordLength)
+    );
+  };
+
   return {
     WORDS,
-    wordLimit,
+    wordOptions,
+    getRandomWord,
   };
 };

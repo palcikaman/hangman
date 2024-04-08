@@ -1,12 +1,18 @@
-import { useState } from "react";
-import { Game } from "./pages/Game";
-import { Home } from "./pages/Home";
+import { Game } from "./pages/Game/Game";
+import { Home } from "./pages/Home/Home";
+import { useGameContext } from "./components/GameContext";
+import { Container, Heading, Stack } from "@chakra-ui/react";
 
 function App() {
-  const [answer, setAnswer] = useState<string | null>(null);
+  const { answer } = useGameContext();
 
   return (
-    <>{answer ? <Game answer={answer} /> : <Home onStart={setAnswer} />}</>
+    <Container centerContent marginTop={4}>
+      <Stack gap={[4, 4, 8]}>
+        <Heading textAlign="center">The Hangman</Heading>
+        {answer ? <Game /> : <Home />}
+      </Stack>
+    </Container>
   );
 }
 
