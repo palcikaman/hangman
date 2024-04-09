@@ -5,41 +5,48 @@ import { Guesses } from "./components/Guesses";
 import { GameOver } from "./components/GameOver";
 import { useGameContext } from "../../components/GameContext";
 import { useWords } from "../../util/useWords";
-import { useState } from "react";
 import { Instructions } from "../Instructions";
+import { MAX_LIVES } from "../../config/const";
 
 export const Game = () => {
-  const [tutorial, setTutorial] = useState(false);
-
   const { getRandomWord } = useWords();
 
-  const { length, answer, setAnswer, guesses, setGuesses, reset } =
-    useGameContext();
+  const {
+    length,
+    answer,
+    setAnswer,
+    guesses,
+    setGuesses,
+    score,
+    incScore,
+    reset,
+  } = useGameContext();
 
   const lostLives = guesses.filter(
     (guess) => !answer?.toUpperCase().includes(guess)
   ).length;
 
   const over =
-    lostLives > 5 ||
+    lostLives >= MAX_LIVES ||
     (answer &&
       [...answer.toUpperCase()].every((char) => guesses.includes(char)));
 
-  return tutorial ? (
-    <Instructions onBack={() => setTutorial(false)} />
-  ) : (
+  return (
     <Flex
       gap={4}
       direction={["column", "column", "row"]}
       alignItems={["center", "center", "flex-start"]}
     >
-      <Lives lostLives={lostLives} />
+      <Lives score={score} lostLives={lostLives} />
       <Stack gap={4}>
-        {over && <GameOver dead={lostLives > 5} />}
+        {over && <GameOver dead={lostLives >= MAX_LIVES} />}
         <Guesses />
         {!over && (
           <LetterInput
             onLetterSelect={(letter) => {
+              if (answer && !answer.toUpperCase().includes(letter)) {
+                incScore();
+              }
               setGuesses([...guesses, letter]);
             }}
             disabledLetters={guesses}
@@ -61,9 +68,7 @@ export const Game = () => {
             Start New Game
           </Button>
         </Flex>
-        <Button onClick={() => setTutorial(true)} variant="link" mt={4}>
-          Instructions
-        </Button>
+        <Instructions />
       </Stack>
     </Flex>
   );
